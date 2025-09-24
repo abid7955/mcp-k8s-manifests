@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: weather-mcp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # URL to your new manifests repository
+    repoURL: https://github.com/abid7955/mcp-k8s-manifests.git
+    targetRevision: main
+    # Path within the repo to the chart
+    path: mcp-charts/weather-mcp
+  destination:
+    server: 'https://kubernetes.default.svc' # This means the local cluster
+    namespace: default # Deploy into the 'default' namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: binance-mcp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/abid7955/mcp-k8s-manifests.git
+    targetRevision: main
+    path: mcp-charts/binance-mcp
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
