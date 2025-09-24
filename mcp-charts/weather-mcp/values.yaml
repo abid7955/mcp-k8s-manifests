@@ -6,7 +6,7 @@ image:
   repository: 093326771032.dkr.ecr.us-east-1.amazonaws.com/weather-mcp
   pullPolicy: IfNotPresent
   # The tag will be updated automatically by our CI/CD pipeline later.
-  tag: "latest"
+  tag: "2a24b8d22d7f13fd2361aa4a6c9b06ab49ae71e5"
 
 # Not needed since we are using ECR, but required by the template.
 imagePullSecrets: []
