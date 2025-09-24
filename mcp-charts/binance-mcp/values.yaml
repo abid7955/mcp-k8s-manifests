@@ -1,0 +1,87 @@
+# Number of pods (copies of your app) to run for high availability.
+replicaCount: 2
+
+image:
+  # Replace with your AWS Account ID and region.
+  repository: 093326771032.dkr.ecr.us-east-1.amazonaws.com/binance-mcp
+  pullPolicy: IfNotPresent
+  # The tag will be updated automatically by our CI/CD pipeline later.
+  tag: "latest"
+
+# Not needed since we are using ECR, but required by the template.
+imagePullSecrets: []
+
+# Overrides for the application name used in Kubernetes resources.
+nameOverride: ""
+fullnameOverride: ""
+
+# --- Service Account Configuration ---
+# We disable creating a new service account and use the default.
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+
+# --- Pod Security and Annotations ---
+podAnnotations: {}
+podSecurityContext:
+  # Best practice: run as a non-root user.
+  runAsNonRoot: true
+  runAsUser: 1001
+
+securityContext:
+  # Prevents the container from gaining more privileges.
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# --- Service (Networking) Configuration ---
+# We use a LoadBalancer to expose the service externally.
+service:
+  type: LoadBalancer
+  port: 80 # The port the load balancer will listen on.
+  targetPort: 8000 # The port your application container listens on.
+
+# --- Ingress Configuration ---
+# Ingress is disabled as we are using a LoadBalancer service for now.
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  
+# --- Kubernetes Gateway API HTTPRoute ---
+# This is a newer alternative to Ingress, also disabled for now.
+httpRoute:
+  enabled: false
+
+# --- Resource Requests and Limits ---
+# Best practice: define resource constraints for stable scheduling.
+resources:
+  limits:
+    cpu: 250m      # Limit to 25% of a CPU core
+    memory: 128Mi  # Limit to 128 Megabytes of RAM
+  requests:
+    cpu: 100m      # Request 10% of a CPU core
+    memory: 64Mi   # Request 64 Megabytes of RAM
+
+# --- Autoscaling Configuration ---
+# This enables the Horizontal Pod Autoscaler (HPA).
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+# --- Advanced Scheduling ---
+# These are placeholders for advanced pod scheduling rules.
+nodeSelector: {}
+tolerations: []
+affinity: {}
